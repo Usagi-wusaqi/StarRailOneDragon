@@ -1,13 +1,16 @@
-import cv2
 import os
-from cv2.typing import MatLike
+import shutil
 from typing import List, Optional
+
+from cv2.typing import MatLike
 
 from one_dragon.base.config.yaml_operator import YamlOperator
 from one_dragon.base.geometry.point import Point
 from one_dragon.base.geometry.rectangle import Rect
 from one_dragon.utils import os_utils, str_utils, cv2_utils, cal_utils
 from one_dragon.utils.i18_utils import gt
+from one_dragon.utils.log_utils import log
+from sr_od.app.world_patrol import world_patrol_route_utils
 from sr_od.sr_map.large_map_info import LargeMapInfo
 from sr_od.sr_map.sr_map_def import Planet, Region, SpecialPoint
 
@@ -17,7 +20,7 @@ class SrMapData:
     def __init__(self):
         self.planet_list: List[Planet] = []
         self.region_list: List[Region] = []
-        self.planet_2_region: dict[str, List[Region]] = {}
+        self.planet_2_region: dict[str, List[Region]] = {}  # key=np_id
 
         self.sp_list: List[SpecialPoint] = []
         self.region_2_sp: dict[str, List[SpecialPoint]] = {}
@@ -47,6 +50,130 @@ class SrMapData:
         file_path = os.path.join(self.get_map_data_dir(), 'planet.yml')
         yaml_op = YamlOperator(file_path)
         self.planet_list = [Planet(**item) for item in yaml_op.data]
+
+    def save_planet_data(self, new_planet_list: list[Planet]) -> None:
+        """
+        保存星球数据并处理相关文件重命名
+        :param new_planet_list: 星球变更信息列表
+        """
+        # 处理星球变更（编号、ID变更导致的文件重命名）
+        for current_planet in new_planet_list:
+            original_planet = self.get_planet_by_cn(current_planet.cn)
+            if original_planet is None:
+                self._handle_new_planet(current_planet)
+                continue
+
+            # 检查是否有编号或ID变更
+            has_num_change = original_planet.num != current_planet.num
+            has_id_change = original_planet.id != current_planet.id
+
+            if has_num_change or has_id_change:
+                # 处理文件夹和文件重命名
+                self._handle_planet_rename(original_planet, current_planet)
+
+        # 转化成保存格式
+        to_save_data = []
+        for current_planet in new_planet_list:
+            to_save_data.append({
+                'num': current_planet.num,
+                'uid': current_planet.id,
+                'cn': current_planet.cn
+            })
+
+        # 按编号排序
+        to_save_data.sort(key=lambda x: x['num'])
+
+        # 保存到文件
+        file_path = os.path.join(self.get_map_data_dir(), 'planet.yml')
+        yaml_op = YamlOperator(file_path)
+        yaml_op.data = to_save_data
+        yaml_op.save()
+
+        # 重新加载数据
+        self.load_planet_data()
+
+    def _handle_new_planet(self, current_planet: Planet) -> None:
+        """
+        处理新增星球
+        """
+        # assets/game_data/world_patrol_map 下新建文件夹
+        map_data_dir = self.get_map_data_dir()
+        new_folder_path = os.path.join(map_data_dir, current_planet.np_id)
+
+        if not os.path.exists(new_folder_path):
+            os.makedirs(new_folder_path)
+
+        # config/world_patrol 下新建文件夹
+        world_patrol_route_utils.get_planet_route_dir(current_planet, personal=False)
+
+    def _handle_planet_rename(self, original_planet: Planet, current_planet: Planet) -> None:
+        """
+        处理星球重命名 目前只能更改 id和num
+        Args:
+            original_planet: 原始星球数据
+            current_planet: 更改后星球数据
+
+        Returns:
+            None
+        """
+        # assets/game_data/world_patrol_map 下改名
+        map_data_dir = self.get_map_data_dir()
+        old_folder_path = os.path.join(map_data_dir, original_planet.np_id)
+        if os.path.exists(old_folder_path):
+            new_folder_path = os.path.join(map_data_dir, current_planet.np_id)
+            # 重命名文件夹
+            if os.path.exists(new_folder_path):
+                # 如果目标文件夹已存在，先删除
+                shutil.rmtree(new_folder_path)
+
+            os.rename(old_folder_path, new_folder_path)
+
+            # 重命名文件夹内的yml文件
+            self._rename_planet_yml_files(new_folder_path, original_planet.np_id, current_planet.np_id)
+
+        # config/world_patrol 下改名
+        old_folder_path = world_patrol_route_utils.get_planet_route_dir(original_planet, personal=False)
+        if os.path.exists(old_folder_path):
+            new_folder_path = world_patrol_route_utils.get_planet_route_dir(current_planet, personal=False)
+            # 重命名文件夹
+            if os.path.exists(new_folder_path):
+                # 如果目标文件夹已存在，先删除
+                shutil.rmtree(new_folder_path)
+            os.rename(old_folder_path, new_folder_path)
+
+            # 重命名文件夹内的yml文件
+            self._rename_planet_yml_files(new_folder_path, original_planet.np_id, current_planet.np_id)
+
+    def _rename_planet_yml_files(
+            self,
+            folder_path: str,
+            old_planet_uid: str,
+            new_planet_uid: str,
+    ) -> None:
+        """
+        重命名文件夹内的yml文件
+        Args:
+            folder_path: 文件夹路径
+            old_planet_uid: 原始星球ID
+            new_planet_uid: 新星球ID
+
+        Returns:
+            None
+        """
+        if not os.path.exists(folder_path):
+            return
+
+        for filename in os.listdir(folder_path):
+            if filename.endswith('.yml') and filename.startswith(old_planet_uid):
+                old_file_path = os.path.join(folder_path, filename)
+                new_filename = filename.replace(old_planet_uid, new_planet_uid, 1)
+                new_file_path = os.path.join(folder_path, new_filename)
+
+                if os.path.exists(new_file_path):
+                    # 如果目标文件已存在，先删除
+                    os.remove(new_file_path)
+
+                os.rename(old_file_path, new_file_path)
 
     def load_region_data(self) -> None:
         """
@@ -83,6 +210,17 @@ class SrMapData:
                     self.region_list.append(region)
                     self.planet_2_region[p.np_id].append(region)
 
+    def get_region_sp_yml_path(self, region: Region) -> str:
+        """
+        获取区域特殊点配置文件路径
+        Args:
+            region: 区域
+
+        Returns:
+            str: 特殊点yml文件路径
+        """
+        return os.path.join(self.get_map_data_dir(), region.planet.np_id, f'{region.pr_id}.yml')
+
     def load_special_point_data(self) -> None:
         """
         加载特殊点数据
@@ -97,7 +235,7 @@ class SrMapData:
                 continue
             loaded_region_set.add(region.pr_id)
 
-            file_path = os.path.join(self.get_map_data_dir(), region.planet.np_id, f'{region.pr_id}.yml')
+            file_path = self.get_region_sp_yml_path(region)
             yaml_op = YamlOperator(file_path)
 
             for sp_data in yaml_op.data:
@@ -112,6 +250,83 @@ class SrMapData:
                     self.region_2_sp[real_region.pr_id] = []
 
                 self.region_2_sp[real_region.pr_id].append(sp)
+
+    def save_special_point_data(
+            self,
+            region: Region,
+            new_sp_list: list[SpecialPoint],
+            overwrite: bool = False,
+    ) -> None:
+        """
+        保存特殊点数据
+
+        Args:
+            region: 区域
+            new_sp_list: 特殊点列表
+            overwrite: 是否覆盖已有文件
+
+        Returns:
+            None
+        """
+        file_path = self.get_region_sp_yml_path(region)
+        yaml_op = YamlOperator(file_path)
+        existed_sp_list: list[SpecialPoint] = []
+        if not overwrite:
+            for sp_data in yaml_op.data:
+                sp_region = self.get_region_by_cn(sp_data['planet_name'], sp_data['region_name'], sp_data.get('region_floor', 0))
+
+                sp = SpecialPoint(
+                    uid=sp_data['uid'],
+                    cn=sp_data['cn'],
+                    region=sp_region,
+                    template_id=sp_data['template_id'],
+                    lm_pos=sp_data['lm_pos'],
+                    tp_pos=sp_data.get('tp_pos', None),
+                )
+                existed_sp_list.append(sp)
+
+        # 追加到原楼层后方
+        merge_sp_list: list[SpecialPoint] = []
+        found_floor: bool = False
+        add_new: bool = False
+        for existed_sp in existed_sp_list:
+            if existed_sp.region.floor == region.floor:
+                found_floor = True
+                merge_sp_list.append(existed_sp)
+            elif not found_floor:
+                merge_sp_list.append(existed_sp)
+            elif not add_new:
+                for new_sp in new_sp_list:
+                    merge_sp_list.append(new_sp)
+                add_new = True
+            else:
+                merge_sp_list.append(existed_sp)
+
+        if not add_new:
+            merge_sp_list.extend(new_sp_list)
+
+        # 按照自己顺眼的格式保存
+        sp_info_list: list[str] = []
+
+        with open(file_path, 'w', encoding='utf-8') as f:
+            for sp in merge_sp_list:
+                sp_info = [
+                    f'- uid: "{sp.id}"',
+                    f'  cn: "{sp.cn}"',
+                    f'  planet_name: "{sp.region.planet.cn}"',
+                    f'  region_name: "{sp.region.cn}"',
+                    f'  region_floor: {sp.region.floor}',
+                    f'  template_id: "{sp.template_id}"',
+                    f'  lm_pos: [{sp.lm_pos.x}, {sp.lm_pos.y}]',
+                ]
+                if sp.lm_pos.x != sp.tp_pos.x or sp.lm_pos.y != sp.tp_pos.y:
+                    sp_info.append(f'  tp_pos: [{sp.tp_pos.x}, {sp.tp_pos.y}]')
+
+                sp_info_list.append('\n'.join(sp_info))
+
+            f.write('\n\n'.join(sp_info_list))
+
+        log.info(f'特殊点保存成功 {region.pr_id}')
 
     def get_planet_by_cn(self, cn: str) -> Optional[Planet]:
         """
@@ -149,7 +364,8 @@ class SrMapData:
         Returns:
             region: 区域
         """
-        region_list: list[Region] = self.planet_2_region.get(planet_name, [])
+        planet: Planet = self.get_planet_by_cn(planet_name)
+        region_list: list[Region] = self.planet_2_region.get(planet.np_id, [])
         for region in region_list:
             if region.cn == region_name and region.floor == floor:
                 return region

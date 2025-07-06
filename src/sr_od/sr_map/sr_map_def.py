@@ -35,6 +35,30 @@ class Planet:
         return gt(self.cn, 'ui')
 
 
+class RegionSet:
+    """一个区域的合集 是不区分楼层的 也就是 assets/game_data/world_patrol_map/P01_KJZHT/P01_KJZHT.yml 里面的内容"""
+
+    def __init__(
+            self,
+            num: int,
+            uid: str,
+            cn: str,
+            floors: list[int] | None = None,
+            parent_region_name: str | None = None,
+            parent_region_floor: int | None = None,
+            enter_template_id: str | None = None,
+            enter_lm_pos: list[int] | None = None,
+    ):
+        self.num: int = num  # 编号 方便列表排序
+        self.id: str = uid  # 通常是中文的拼音 与num组成唯一标识 用于文件命名
+        self.cn: str = cn  # 中文
+        self.floors: list[int] = floors  #  楼层列表
+        self.parent_region_name: str = parent_region_name  # 父区域的中文名称
+        self.parent_region_floor: int = parent_region_floor  # 父区域的楼层
+        self.enter_template_id: str = enter_template_id  # 父区域进入本子区域时的图标的模板id
+        self.enter_lm_pos: list[int] = enter_lm_pos # 父区域进入本子区域时的图标在大地图上的坐标
+
+
 class Region:
 
     def __init__(self, num: int, uid: str, cn: str, planet: Planet,
@@ -44,7 +68,7 @@ class Region:
                  enter_lm_pos: Optional[Point] = None,
                  large_map_scale: Optional[int] = None):
         self.num: int = num  # 编号 方便列表排序
-        self.id: str = uid  # id 用在找文件夹之类的
+        self.id: str = uid  # 通常是中文的拼音 与num组成唯一标识 用于文件命名
         self.cn: str = cn  # 中文 用在OCR
         self.planet: Planet = planet
         self.floor: int = floor
@@ -84,6 +108,8 @@ class Region:
             return '_F%d' % self.floor
         elif self.floor < 0:
             return '_B%d' % abs(self.floor)
+        else:
+            return ''
 
     @property
     def rl_id(self) -> str:
