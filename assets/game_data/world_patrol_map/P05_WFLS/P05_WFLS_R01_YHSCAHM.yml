@@ -1,0 +1,172 @@
+- uid: "SJHT"
+  cn: "三季海庭"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 1
+  template_id: "mm_tp_03"
+  lm_pos: [1761, 1062]
+  tp_pos: [1778, 1065]
+
+- uid: "MYZC"
+  cn: "满溢主池"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 1
+  template_id: "mm_tp_03"
+  lm_pos: [1983, 1228]
+  tp_pos: [1953, 1199]
+
+- uid: "LQDT"
+  cn: "流憩大厅"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 1
+  template_id: "mm_tp_03"
+  lm_pos: [2363, 1394]
+  tp_pos: [2384, 1405]
+
+- uid: "YSTG"
+  cn: "云石天宫"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 1
+  template_id: "mm_tp_03"
+  lm_pos: [1625, 1483]
+  tp_pos: [1588, 1475]
+
+- uid: "YSSJ"
+  cn: "云石市集"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 1
+  template_id: "mm_tp_03"
+  lm_pos: [980, 2359]
+  tp_pos: [964, 2359]
+
+- uid: "KFLGC"
+  cn: "刻法勒广场"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 1
+  template_id: "mm_tp_03"
+  lm_pos: [1274, 2438]
+  tp_pos: [1265, 2448]
+
+- uid: "LHZL"
+  cn: "离怀之路"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 1
+  template_id: "mm_tp_03"
+  lm_pos: [1625, 3108]
+  tp_pos: [1665, 3128]
+
+- uid: "DMYNS"
+  cn: "达米亚诺斯"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 1
+  template_id: "mm_tp_19"
+  lm_pos: [2054, 1712]
+  tp_pos: [2050, 1704]
+
+- uid: "BBPPDSC"
+  cn: "豹豹碰碰大赛场"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 1
+  template_id: "mm_tp_20"
+  lm_pos: [1815, 983]
+  tp_pos: [1816, 988]
+
+- uid: "AKM"
+  cn: "阿克蒙"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 1
+  template_id: "mm_sp_03"
+  lm_pos: [2052, 1154]
+
+- uid: "CSS"
+  cn: "藏书所"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 1
+  template_id: "mm_sp_03"
+  lm_pos: [996, 2312]
+
+- uid: "YSCT"
+  cn: "云石餐厅"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 1
+  template_id: "mm_sp_03"
+  lm_pos: [940, 2318]
+
+- uid: "HTNSTJP"
+  cn: "哈托努斯铁匠铺"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 1
+  template_id: "mm_sp_03"
+  lm_pos: [1129, 2342]
+
+- uid: "SYYZ"
+  cn: "岁月遗珍"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 1
+  template_id: "mm_sp_03"
+  lm_pos: [1001, 2364]
+
+- uid: "QGDJT"
+  cn: "奇怪的晶体"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 1
+  template_id: "mm_sp_25"
+  lm_pos: [2476, 1472]
+
+- uid: "YNSZJ"
+  cn: "雅努斯之驹"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 1
+  template_id: "mm_sp_26"
+  lm_pos: [1679, 1027]
+
+
+- uid: "SMHY"
+  cn: "生命花园"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 2
+  template_id: "mm_tp_03"
+  lm_pos: [1995, 844]
+  tp_pos: [1971, 864]
+
+- uid: "YXYC"
+  cn: "英雄浴池"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 2
+  template_id: "mm_tp_03"
+  lm_pos: [2313, 1099]
+  tp_pos: [2321, 1070]
+
+- uid: "QMLGLZX"
+  cn: "奇美拉管理中心"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 2
+  template_id: "mm_tp_21"
+  lm_pos: [1943, 697]
+  tp_pos: [1935, 710]
+
+- uid: "AGLYDJSJF"
+  cn: "阿格莱雅的金丝茧房"
+  planet_name: "翁法罗斯"
+  region_name: "「永恒圣城」奥赫玛"
+  region_floor: 2
+  template_id: "mm_sp_20"
+  lm_pos: [1847, 864]

@@ -1,5 +1,3 @@
-import os
-
 import cv2
 
 from one_dragon.utils import debug_utils, cv2_utils
@@ -27,7 +25,11 @@ def cal_one(tp: SpecialPoint, debug_image: str, show: bool = False):
 
     log.info('%s 传送落地坐标 tp_pos: [%d, %d] 使用缩放 %.2f', tp.display_name, result.center.x, result.center.y, result.template_scale)
     if show:
-        cv2_utils.show_overlap(lm_info.raw, mm, result.x, result.y, template_scale=result.template_scale, wait=0)
+        cv2_utils.show_overlap(
+            lm_info.raw, mm, result.x, result.y,
+            template_scale=result.template_scale, wait=0,
+            max_width=3840, max_height=2160
+        )
 
 
 if __name__ == '__main__':
@@ -35,26 +37,38 @@ if __name__ == '__main__':
     ctx.init_by_config()
 
     planet_name: str = '翁法罗斯'
-    region_name: str = '「龙骸古城」斯缇科西亚'
+    region_name: str = '「永恒圣城」奥赫玛'
 
     planet = ctx.map_data.best_match_planet_by_name(gt(planet_name))
     region = ctx.map_data.best_match_region_by_name(gt(region_name), planet=planet)
 
     sp_name_list = [
-        '古城正门',
-        '岁月神殿',
-        '宝库秘道',
-        '王宫废庭',
-        '双月高塔',
-        '溟簇之形·凝滞虚影',
+        '三季海庭',
+        '满溢主池',
+        '流憩大厅',
+        '云石天宫',
+        '云石市集',
+        '刻法勒广场',
+        '离怀之路',
+        '达米亚诺斯',
+        '豹豹碰碰大赛场',
+        '生命花园',
+        '英雄浴池',
+        '奇美拉管理中心',
     ]
     img_list = [
-        '_1749311886964',
-        '_1749311895463',
-        '_1749311900862',
-        '_1749311905946',
-        '_1749311912932',
-        '_1749311917665',
+        '_1751784718441',
+        '_1751784820844',
+        '_1751784826909',
+        '_1751784835044',
+        '_1751784845893',
+        '_1751784851264',
+        '_1751784897779',
+        '_1751785127724',
+        '_1751785136540',
+        '_1751785582313',
+        '_1751785587046',
+        '_1751785143340',
     ]
     for i in range(len(sp_name_list)):
         sp = ctx.map_data.best_match_sp_by_name(region, gt(sp_name_list[i]))

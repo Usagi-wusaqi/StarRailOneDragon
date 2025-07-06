@@ -54,7 +54,8 @@ def init_tp_with_background(template_id: str, noise_threshold: int = 0):
     :param noise_threshold: 消除多少个像素点以下的连通块 可以视情况调整
     :return:
     """
-    raw = _read_template_raw_image(template_id)
+    sub_dir = 'mm_icon'
+    raw = _read_template_raw_image(sub_dir, template_id)
     if raw.shape[2] == 4:
         raw = cv2.cvtColor(raw, cv2.COLOR_BGRA2BGR)
     gray = cv2.cvtColor(raw, cv2.COLOR_BGR2GRAY)
@@ -70,7 +71,7 @@ def init_tp_with_background(template_id: str, noise_threshold: int = 0):
     # 背景统一使用道路颜色 因为地图上传送点附近大概率都是道路 这样更方便匹配
     final_origin, final_mask = cv2_utils.convert_to_standard(raw, mask, width=51, height=51, bg_color=game_const.COLOR_MAP_ROAD_BGR)
 
-    show_and_save(template_id, final_origin, final_mask)
+    show_and_save(sub_dir, template_id, final_origin, final_mask)
 
 
 def init_sp_with_background(template_id: str, noise_threshold: int = 0, sub_dir: str = 'mm_icon'):
@@ -190,7 +191,7 @@ def save_template_image(img: MatLike, template_id: str, tt: str, sub_dir: Option
 
 def init_arrow_template(mm: MatLike):
     """
-    找一个传送点下来朝正右方的地方 截取小箭头的template 推荐位置 空间站黑塔-支援舱段-月台
+    找一个传送点下来朝正右方的地方 截取小箭头的template 推荐位置 空间站「黑塔」-支援舱段-月台
     :param mm: 小地图
     :return: 模板
     """
@@ -497,8 +498,8 @@ def cut_template_with_mask(sub_dir: str, template_id: str) -> None:
 
 
 if __name__ == '__main__':
-    # init_tp_with_background('mm_tp_18', noise_threshold=30)
-    init_sp_with_background('mm_sp_24')
+    # init_tp_with_background('mm_tp_21', noise_threshold=30)
+    init_sp_with_background('mm_sp_26')
     # init_ui_icon('ui_icon_10')
     # init_battle_ctrl_icon('battle_ctrl_02')
     # _test_init_arrow_template()
