@@ -8,6 +8,11 @@
       remark_in_game: "位面饰品"
       show_in_power_plan: true
       mission_list:
+        - mission_name: "月下朱殷"
+          show_in_power_plan: true
+          display_name: "妖精织梦的乐园 沉欢醉饮的海隅"
+          power: 40
+
         - mission_name: "纷争不休"
           show_in_power_plan: true
           display_name: "谧宁拾骨地 渊思寂虑的巨树"
