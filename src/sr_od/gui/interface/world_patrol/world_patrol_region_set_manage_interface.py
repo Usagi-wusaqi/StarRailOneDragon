@@ -105,8 +105,6 @@ class WorldPatrolRegionSetManageInterface(VerticalScrollInterface):
 
         layout.addWidget(self.data_table)
 
-        layout.addSpacing(0)
-
         return layout
 
     def setup_table_headers(self):
