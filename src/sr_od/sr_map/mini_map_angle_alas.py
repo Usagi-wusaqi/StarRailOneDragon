@@ -125,7 +125,7 @@ def calculate(minimap: MatLike, scale: int = 1):
 
     # Convert match point to degree
     degree = np.argmax(result) / (d * scale) * 360 + 135
-    degree = degree - 1.875  # 跟alas的+3不一样 这边认为 空间站黑塔-支援舱段-月台 落地后为正右方 0度 以此为基准调整的值
+    degree = degree - 1.875  # 跟alas的+3不一样 这边认为 空间站「黑塔」-支援舱段-月台 落地后为正右方 0度 以此为基准调整的值
     while degree > 360:
         degree -= 360
 

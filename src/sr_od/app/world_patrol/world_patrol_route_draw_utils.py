@@ -344,7 +344,7 @@ def add_gameplay_interact(route: WorldPatrolRoute, seconds: int):
 def __debug():
     ctx = SrContext()
     ctx.init_by_config()
-    tp = ctx.map_data.best_match_sp_by_all_name('空间站黑塔', '主控舱段', '监察域', 0)
+    tp = ctx.map_data.best_match_sp_by_all_name('空间站「黑塔」', '主控舱段', '监察域', 0)
     chosen_route = ctx.world_patrol_route_data.create_new_route(tp, '')
     cal_pos_by_screenshot(ctx, chosen_route, debug=True)
     cv2.waitKey(0)

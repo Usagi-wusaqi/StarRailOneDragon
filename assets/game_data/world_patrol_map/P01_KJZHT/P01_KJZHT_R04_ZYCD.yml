@@ -1,6 +1,6 @@
 - uid: "BJKF"
   cn: "备件库房"
-  planet_name: "空间站黑塔"
+  planet_name: "空间站「黑塔」"
   region_name: "支援舱段"
   region_floor: 2
   template_id: "mm_tp_03"
@@ -9,7 +9,7 @@
 
 - uid: "YT"
   cn: "月台"
-  planet_name: "空间站黑塔"
+  planet_name: "空间站「黑塔」"
   region_name: "支援舱段"
   region_floor: 2
   template_id: "mm_tp_03"
@@ -18,7 +18,7 @@
 
 - uid: "DLS"
   cn: "电力室"
-  planet_name: "空间站黑塔"
+  planet_name: "空间站「黑塔」"
   region_name: "支援舱段"
   region_floor: 2
   template_id: "mm_tp_03"
@@ -27,7 +27,7 @@
 
 - uid: "CHZL"
   cn: "存护之蕾·拟造花萼（赤）"
-  planet_name: "空间站黑塔"
+  planet_name: "空间站「黑塔」"
   region_name: "支援舱段"
   region_floor: 2
   template_id: "mm_tp_07"
@@ -36,7 +36,7 @@
 
 - uid: "TKDT"
   cn: "太空电梯"
-  planet_name: "空间站黑塔"
+  planet_name: "空间站「黑塔」"
   region_name: "支援舱段"
   region_floor: 2
   template_id: "mm_sp_02"
@@ -45,7 +45,7 @@
 
 - uid: "HMDKD"
   cn: "毁灭的开端·历战余响"
-  planet_name: "空间站黑塔"
+  planet_name: "空间站「黑塔」"
   region_name: "支援舱段"
   region_floor: 2
   template_id: "mm_boss_01"

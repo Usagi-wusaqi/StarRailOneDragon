@@ -18,7 +18,7 @@ class TransportToRecover(SrOperation):
         :param tp: 当前传送点
         """
         self.tp: SpecialPoint = ctx.map_data.best_match_sp_by_all_name(
-            '空间站黑塔',
+            '空间站「黑塔」',
             '主控舱段',
             '核心通路'
         )

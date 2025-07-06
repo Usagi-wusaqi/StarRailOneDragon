@@ -1,6 +1,6 @@
 - uid: "WC"
   cn: "温床"
-  planet_name: "空间站黑塔"
+  planet_name: "空间站「黑塔」"
   region_name: "禁闭舱段"
   region_floor: 2
   template_id: "mm_tp_03"
@@ -9,7 +9,7 @@
 
 - uid: "JSZX"
   cn: "集散中心"
-  planet_name: "空间站黑塔"
+  planet_name: "空间站「黑塔」"
   region_name: "禁闭舱段"
   region_floor: 3
   template_id: "mm_tp_03"
@@ -18,7 +18,7 @@
 
 - uid: "PYM"
   cn: "培养皿"
-  planet_name: "空间站黑塔"
+  planet_name: "空间站「黑塔」"
   region_name: "禁闭舱段"
   region_floor: 1
   template_id: "mm_tp_03"
@@ -27,7 +27,7 @@
 
 - uid: "YWZBJ"
   cn: "药物制备间"
-  planet_name: "空间站黑塔"
+  planet_name: "空间站「黑塔」"
   region_name: "禁闭舱段"
   region_floor: 2
   template_id: "mm_tp_03"
@@ -36,7 +36,7 @@
 
 - uid: "SWHBX"
   cn: "生物烘焙箱"
-  planet_name: "空间站黑塔"
+  planet_name: "空间站「黑塔」"
   region_name: "禁闭舱段"
   region_floor: 2
   template_id: "mm_tp_14"
@@ -45,7 +45,7 @@
 
 - uid: "KJYRYG"
   cn: "开局一人一狗"
-  planet_name: "空间站黑塔"
+  planet_name: "空间站「黑塔」"
   region_name: "禁闭舱段"
   region_floor: 2
   template_id: "mm_sp_01"
@@ -54,7 +54,7 @@
 
 - uid: "ZXDJY"
   cn: "蛀星的旧靥·历战余响"
-  planet_name: "空间站黑塔"
+  planet_name: "空间站「黑塔」"
   region_name: "禁闭舱段"
   region_floor: 1
   template_id: "mm_boss_04"
