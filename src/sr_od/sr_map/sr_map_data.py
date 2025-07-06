@@ -12,7 +12,7 @@ from one_dragon.utils.i18_utils import gt
 from one_dragon.utils.log_utils import log
 from sr_od.app.world_patrol import world_patrol_route_utils
 from sr_od.sr_map.large_map_info import LargeMapInfo
-from sr_od.sr_map.sr_map_def import Planet, Region, SpecialPoint
+from sr_od.sr_map.sr_map_def import Planet, Region, RegionSet, SpecialPoint
 
 
 class SrMapData:
@@ -21,6 +21,9 @@ class SrMapData:
         self.planet_list: List[Planet] = []
         self.region_list: List[Region] = []
         self.planet_2_region: dict[str, List[Region]] = {}  # key=np_id
+
+        self.region_set_list: List[RegionSet] = []
+        self.planet_2_region_set: dict[str, List[RegionSet]] = {}  # key=np_id
 
         self.sp_list: List[SpecialPoint] = []
         self.region_2_sp: dict[str, List[SpecialPoint]] = {}
@@ -35,6 +38,7 @@ class SrMapData:
         :return:
         """
         self.load_planet_data()
+        self.load_region_set_data()
         self.load_region_data()
         self.load_special_point_data()
 
@@ -91,6 +95,7 @@ class SrMapData:
 
         # 重新加载数据
         self.load_planet_data()
+        self.load_region_set_data()
 
     def _handle_new_planet(self, current_planet: Planet) -> None:
         """
@@ -174,6 +179,85 @@ class SrMapData:
                     os.remove(new_file_path)
 
                 os.rename(old_file_path, new_file_path)
+
+    def load_region_set_data(self) -> None:
+        """
+        加载区域集合数据
+        :return:
+        """
+        self.region_set_list = []
+        self.planet_2_region_set: dict[str, List[RegionSet]] = {}
+
+        for p in self.planet_list:
+            file_path = os.path.join(self.get_map_data_dir(), p.np_id, f'{p.np_id}.yml')
+            yaml_op = YamlOperator(file_path)
+            self.planet_2_region_set[p.np_id] = []
+
+            for r in yaml_op.data:
+                region_set = RegionSet(
+                    num=r['num'],
+                    uid=r['uid'],
+                    cn=r['cn'],
+                    floors=r.get('floors', [0]),
+                    parent_region_name=r.get('parent_region_name', None),
+                    parent_region_floor=r.get('parent_region_floor', None),
+                    enter_template_id=r.get('enter_template_id', None),
+                    enter_lm_pos=r.get('enter_lm_pos', None),
+                )
+
+                self.region_set_list.append(region_set)
+                self.planet_2_region_set[p.np_id].append(region_set)
+
+        log.info(f'区域集合数据加载完成 共{len(self.region_set_list)}个')
+
+    def save_region_set_data(self, planet: Planet, new_region_set_list: list[RegionSet]) -> None:
+        """
+        保存区域集合数据
+        :param planet: 星球
+        :param new_region_set_list: 区域集合变更信息列表
+        """
+        # 转化成保存格式
+        to_save_data = []
+        for region_set in new_region_set_list:
+            data = {
+                'num': region_set.num,
+                'uid': region_set.id,
+                'cn': region_set.cn,
+            }
+
+            # 只有非默认值才保存
+            if region_set.floors is not None and len(region_set.floors) > 1:
+                data['floors'] = region_set.floors
+            if region_set.parent_region_name:
+                data['parent_region_name'] = region_set.parent_region_name
+            if region_set.parent_region_floor is not None:
+                data['parent_region_floor'] = region_set.parent_region_floor
+            if region_set.enter_template_id:
+                data['enter_template_id'] = region_set.enter_template_id
+            if region_set.enter_lm_pos:
+                data['enter_lm_pos'] = region_set.enter_lm_pos
+
+            to_save_data.append(data)
+
+        # 这里不需要排序 传入时已经按米游社返回顺序排好序了 编号是一条龙用于唯一标识的
+
+        # 保存到文件
+        file_path = os.path.join(self.get_map_data_dir(), planet.np_id, f'{planet.np_id}.yml')
+        yaml_op = YamlOperator(file_path)
+        yaml_op.data = to_save_data
+        yaml_op.save()
+
+        # 重新加载数据
+        self.load_region_set_data()
+        self.load_region_data()
+
+    def get_region_set_by_planet(self, planet: Planet) -> List[RegionSet]:
+        """
+        根据星球获取区域集合列表
+        :param planet: 星球
+        :return: 区域集合列表
+        """
+        return self.planet_2_region_set.get(planet.np_id, [])
 
     def load_region_data(self) -> None:
         """

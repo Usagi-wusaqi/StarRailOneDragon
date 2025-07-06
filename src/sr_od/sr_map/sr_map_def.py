@@ -52,7 +52,7 @@ class RegionSet:
         self.num: int = num  # 编号 方便列表排序
         self.id: str = uid  # 通常是中文的拼音 与num组成唯一标识 用于文件命名
         self.cn: str = cn  # 中文
-        self.floors: list[int] = floors  #  楼层列表
+        self.floors: list[int] = floors if floors is not None else [0]  #  楼层列表
         self.parent_region_name: str = parent_region_name  # 父区域的中文名称
         self.parent_region_floor: int = parent_region_floor  # 父区域的楼层
         self.enter_template_id: str = enter_template_id  # 父区域进入本子区域时的图标的模板id

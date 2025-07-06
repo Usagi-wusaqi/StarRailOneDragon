@@ -180,15 +180,46 @@ def get_region_set_list(planet_name: str) -> list[RegionSet]:
     for planet_node in map_tree_list:
         if planet_node.name != planet_name:
             continue
+        region_name_set: set = set()
+
         for region_node in planet_node.children:
             region_name = region_node.name
-            floors: list[str] | None = None
+
+            skip: bool = False
+            # 会存在子区域的数据 '「云端遗堡」晨昏之眼-3层房间（永夜）'
+            # 子区域的数据很乱 还会出现 '雅努萨波利斯_中上房间（永夜）' 这种区域名称对不上的
+            # 因此房间的先全跳过
+            if region_name.find('房间') > -1:
+                skip = True
+            for existed_region_name in region_name_set:
+                if region_name.startswith(existed_region_name) and region_name.find('房间') > -1:
+                    skip = True
+                    break
+            if skip:
+                continue
+
+            region_name_set.add(region_name)
+
+            floors: list[int] = []
             for floor_node in region_node.children:
                 floor_name = floor_node.name
                 if floor_name == region_name:
                     continue
-                floors.append(floor_name.replace('层', ''))
+                # 提取楼层数字
+                floor_str = floor_name.replace('层', '')
+                try:
+                    floor_num = int(floor_str)
+                    floors.append(floor_num)
+                except ValueError:
+                    # 如果无法解析楼层数字，跳过
+                    continue
 
+            # 如果没有楼层信息，默认为0层
+            # 部分数据单层也会有个1层的数据
+            if len(floors) <= 1:
+                floors = [0]
+
+            floors.sort()
             region = RegionSet(
                 num=0,
                 uid='AUTO_GEN',
@@ -198,3 +229,7 @@ def get_region_set_list(planet_name: str) -> list[RegionSet]:
             region_set_list.append(region)
 
     return region_set_list
+
+
+if __name__ == '__main__':
+    print(get_region_set_list('翁法罗斯'))
