@@ -2865,6 +2865,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/30/23/2f0a3efc4d6a32f3b63cdff36cd398d9701d26cda58e3ab97ac79fb5e60d/pyperclip-1.9.0.tar.gz", hash = "sha256:b7de0142ddc81bfc5c7507eea19da920b92252b548b96186caf94a5e2527d310", size = 20961, upload-time = "2024-06-18T20:38:48.401Z" }
 
 [[package]]
+name = "pypinyin"
+version = "0.54.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/c9/7f/81cb5416ddacfeccca8eeedcd3543a72b093b26d9c4ca7bde8beea733e4e/pypinyin-0.54.0.tar.gz", hash = "sha256:9ab0d07ff51d191529e22134a60e109d0526d80b7a80afa73da4c89521610958", size = 837455, upload-time = "2025-03-30T11:31:39.142Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b6/ec/2c04ac863e7a85bb68b0b655cec2f19853d51d305ce3d785848db6037b8d/pypinyin-0.54.0-py2.py3-none-any.whl", hash = "sha256:5f776f19b9fd922e4121a114810b22048d90e6e8037fb1c07f4c40f987ae6e7a", size = 837012, upload-time = "2025-03-30T11:31:36.588Z" },
+]
+
+[[package]]
 name = "pyreadline3"
 version = "3.4.1"
 source = { registry = "https://pypi.org/simple" }
@@ -3211,6 +3220,7 @@ dev = [
     { name = "colorama" },
     { name = "polib" },
     { name = "pyinstaller" },
+    { name = "pypinyin" },
 ]
 
 [package.metadata]
@@ -3235,6 +3245,7 @@ dev = [
     { name = "colorama", specifier = "==0.4.6" },
     { name = "polib", specifier = "==1.2.0" },
     { name = "pyinstaller", specifier = "==6.7.0" },
+    { name = "pypinyin", specifier = "==0.54.0" },
 ]
 
 [[package]]

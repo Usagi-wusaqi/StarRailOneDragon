@@ -165,6 +165,15 @@ def get_planet_list() -> list[Planet]:
 
 
 def get_region_set_list(planet_name: str) -> list[RegionSet]:
+    """
+    从米游社接口，获取星球下的区域列表
+
+    Args:
+        planet_name: 星球名称
+
+    Returns:
+        list[RegionSet]: 区域列表
+    """
     region_set_list = []
 
     map_tree_list = get_map_tree()
@@ -187,4 +196,5 @@ def get_region_set_list(planet_name: str) -> list[RegionSet]:
                 floors=floors,
             )
             region_set_list.append(region)
-        return region_set_list
+
+    return region_set_list

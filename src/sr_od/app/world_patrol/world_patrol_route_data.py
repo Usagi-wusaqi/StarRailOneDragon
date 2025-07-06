@@ -5,6 +5,7 @@ from one_dragon.base.config.yaml_operator import YamlOperator
 from one_dragon.utils import os_utils
 from one_dragon.utils.i18_utils import gt
 from one_dragon.utils.log_utils import log
+from sr_od.app.world_patrol import world_patrol_route_utils
 from sr_od.sr_map.sr_map_data import SrMapData
 from sr_od.sr_map.sr_map_def import Planet, Region, SpecialPoint
 from sr_od.app.world_patrol.world_patrol_route import WorldPatrolRoute
@@ -45,7 +46,7 @@ class WorldPatrolRouteData:
                 if is_personal and not include_personal:
                     continue
 
-                planet_dir = self.get_planet_route_dir(planet, personal=is_personal)
+                planet_dir = world_patrol_route_utils.get_planet_route_dir(planet, personal=is_personal)
 
                 for route_filename in os.listdir(planet_dir):
                     if not route_filename.endswith('.yml'):
@@ -131,19 +132,6 @@ class WorldPatrolRouteData:
         return route
 
     @staticmethod
-    def get_planet_route_dir(planet: Planet, personal: bool = False) -> str:
-        """
-        获取星球的路线文件夹目录
-        :param planet:
-        :param personal: 是否私人配置
-        :return:
-        """
-        if personal:
-            return os_utils.get_path_under_work_dir('config', 'world_patrol', 'personal', planet.np_id)
-        else:
-            return os_utils.get_path_under_work_dir('config', 'world_patrol', planet.np_id)
-
-    @staticmethod
     def get_personal_route_dir() -> str:
         """
         个人用的路线文件夹
@@ -166,7 +154,7 @@ class WorldPatrolRouteData:
             if route.tp.unique_id == tp.unique_id:
                 max_route_idx_in_tp = max(max_route_idx_in_tp, route.route_num_in_tp)
 
-        planet_dir = self.get_planet_route_dir(tp.planet, personal)
+        planet_dir = world_patrol_route_utils.get_planet_route_dir(tp.planet, personal)
         route_filename = f'{tp.planet.np_id}_{tp.region.r_id}_R{(max_route_idx_in_region + 1):02d}_{tp.id}_{max_route_idx_in_tp + 1}.yml'
         route_path = os.path.join(planet_dir, route_filename)
         return route_path
@@ -187,7 +175,7 @@ class WorldPatrolRouteData:
         """
         保存路线
         """
-        planet_dir = self.get_planet_route_dir(route.tp.planet, personal=personal)
+        planet_dir = world_patrol_route_utils.get_planet_route_dir(route.tp.planet, personal=personal)
         route_filename = f'{route.tp.planet.np_id}_{route.tp.region.r_id}_R{route.route_num_in_region:02d}_{route.tp.id}_{route.route_num_in_tp}.yml'
         route_path = os.path.join(planet_dir, route_filename)
 

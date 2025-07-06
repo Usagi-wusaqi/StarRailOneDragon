@@ -24,6 +24,7 @@ dev = [
     "colorama==0.4.6",
     "polib==1.2.0",
     "pyinstaller==6.7.0",
+    "pypinyin==0.54.0",
 ]
 
 [tool.uv]
