@@ -5,8 +5,7 @@ from sr_od.context.sr_context import SrContext
 from sr_od.gui.interface.world_patrol.large_map_recorder_run_interface import LargeMapRecorderRunInterface
 from sr_od.gui.interface.world_patrol.world_patrol_draw_route_interface import WorldPatrolDrawRouteInterface
 from sr_od.gui.interface.world_patrol.world_patrol_planet_manage_interface import WorldPatrolPlanetManageInterface
-from sr_od.gui.interface.world_patrol.world_patrol_region_set_manage_interface import \
-    WorldPatrolRegionSetManageInterface
+from sr_od.gui.interface.world_patrol.world_patrol_region_set_manage_interface import WorldPatrolRegionSetManageInterface
 from sr_od.gui.interface.world_patrol.world_patrol_run_interface import WorldPatrolRunInterface
 from sr_od.gui.interface.world_patrol.world_patrol_setting_interface import WorldPatrolSettingInterface
 from sr_od.gui.interface.world_patrol.world_patrol_whitelist_interface import WorldPatrolWhitelistInterface

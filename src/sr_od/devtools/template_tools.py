@@ -376,23 +376,6 @@ def init_mission_star_active(template_id: str = 'mission_star_active'):
     show_and_save(template_id, origin, mask)
 
 
-def init_character_avatar_from_alas():
-    """
-    批量将头像创建文件夹并移入 头像从alas复制
-    :return:
-    """
-    dir_path = os_utils.get_path_under_work_dir('images', 'template', 'character_avatar')
-    for file in os.listdir(dir_path):
-        if file.endswith('.png'):
-            character = file.split('.')[0].lower()
-            sub_dir = os.path.join(dir_path, character)
-            if not os.path.exists(sub_dir):
-                os.mkdir(sub_dir)
-            old_file_path = os.path.join(dir_path, file)
-            new_file_path = os.path.join(sub_dir, 'origin.png')
-            shutil.move(old_file_path, new_file_path)
-
-
 def init_character_combat_type(template_id):
     raw = _read_template_raw_image(template_id, sub_dir='character_combat_type')
     gray = cv2.cvtColor(raw, cv2.COLOR_BGR2GRAY)
@@ -512,7 +495,6 @@ if __name__ == '__main__':
     # init_store_buy_num_ctrl('store_buy_max')
     # init_battle_times_control('battle_times_plus')
     # init_mission_star_active()
-    # init_character_avatar_from_alas()
     # init_character_combat_type('lightning')
     # init_inventory_category('valuables')
     # init_sim_uni_move_target('level_type_encounter')

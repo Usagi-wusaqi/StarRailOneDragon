@@ -1,22 +1,20 @@
-import yaml
-from PySide6.QtGui import QImage
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
-from qfluentwidgets import PushButton, PlainTextEdit, SettingCardGroup, FluentIcon, LineEdit
-from scipy.constants import value
 from typing import Optional, List
+
+import yaml
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
+from cv2.typing import MatLike
+from qfluentwidgets import PushButton, PlainTextEdit, SettingCardGroup, FluentIcon, LineEdit
 
 from one_dragon.base.config.config_item import ConfigItem
 from one_dragon.base.operation.context_event_bus import ContextEventItem
 from one_dragon.base.operation.one_dragon_context import ContextKeyboardEventEnum
-from one_dragon_qt.widgets.click_image_label import ImageScaleEnum, ClickImageLabel
-from one_dragon_qt.widgets.cv2_image import Cv2Image
-from one_dragon_qt.widgets.setting_card.combo_box_setting_card import ComboBoxSettingCard
-from one_dragon_qt.widgets.setting_card.switch_setting_card import SwitchSettingCard
-from one_dragon_qt.widgets.vertical_scroll_interface import VerticalScrollInterface
 from one_dragon.utils import str_utils
 from one_dragon.utils.i18_utils import gt
 from one_dragon_qt.widgets.combo_box import ComboBox
+from one_dragon_qt.widgets.image_viewer_widget import ImageViewerWidget
 from one_dragon_qt.widgets.row import Row
+from one_dragon_qt.widgets.setting_card.switch_setting_card import SwitchSettingCard
+from one_dragon_qt.widgets.vertical_scroll_interface import VerticalScrollInterface
 from sr_od.app.world_patrol import world_patrol_route_draw_utils
 from sr_od.app.world_patrol.world_patrol_app import WorldPatrolApp
 from sr_od.app.world_patrol.world_patrol_route import WorldPatrolRoute
@@ -61,8 +59,7 @@ class WorldPatrolDrawRouteInterface(VerticalScrollInterface):
         horizontal_layout.addSpacing(5)
         horizontal_layout.addLayout(self.get_middle_layout())
         horizontal_layout.addSpacing(5)
-        horizontal_layout.addLayout(self.get_right_layout())
-        horizontal_layout.addStretch(1)
+        horizontal_layout.addLayout(self.get_right_layout(), 1)
 
         # 确保 QHBoxLayout 可以伸缩
         horizontal_layout.setSpacing(0)
@@ -300,19 +297,9 @@ class WorldPatrolDrawRouteInterface(VerticalScrollInterface):
 
         layout.addWidget(SettingCardGroup('大地图'))
 
-        self.image_size_opt = ComboBoxSettingCard(
-            icon=FluentIcon.ZOOM_IN, title='图片显示大小',
-            options_enum=ImageScaleEnum
-        )
-        self.image_size_opt.setValue(1)
-        self.image_size_opt.value_changed.connect(self.on_image_size_chosen)
-        layout.addWidget(self.image_size_opt)
-
-        self.large_map_image = ClickImageLabel()
-        self.large_map_image.clicked_with_pos.connect(self.on_large_map_clicked)
-        layout.addWidget(self.large_map_image)
-
-        layout.addStretch(1)
+        self.large_map_image = ImageViewerWidget()
+        self.large_map_image.point_clicked.connect(self.on_large_map_clicked)
+        layout.addWidget(self.large_map_image, 1)
 
         return layout
 
@@ -503,6 +490,7 @@ class WorldPatrolDrawRouteInterface(VerticalScrollInterface):
         self.existed_route_opt.set_items(config_list, self.chosen_route)
 
     def update_large_map_image(self) -> None:
+        img_to_show: MatLike | None = None
         if self.chosen_route is None:
             if self.chosen_tp is None:
                 region = self.chosen_region_without_level
@@ -510,33 +498,18 @@ class WorldPatrolDrawRouteInterface(VerticalScrollInterface):
                     region = self.chosen_region_with_level
                 if region is not None:
                     lm_info = self.ctx.map_data.get_large_map_info(region)
-                    if lm_info.raw is None:
-                        img = QImage()
-                    else:
+                    if lm_info.raw is not None:
                         img_to_show = lm_info.raw.copy()
-                        img = Cv2Image(img_to_show)
-                else:
-                    img = QImage()
             else:
                 route = WorldPatrolRoute(self.chosen_tp, {
                     "author": [],
                     "route": []
                 }, '')
                 img_to_show = world_patrol_route_draw_utils.get_route_image(self.ctx, route)
-                img = Cv2Image(img_to_show)
         else:
             img_to_show = world_patrol_route_draw_utils.get_route_image(self.ctx, self.chosen_route)
-            img = Cv2Image(img_to_show)
 
-        self.large_map_image.setImage(img)
-        size_value: float = self.image_size_opt.combo_box.currentData()
-        if size_value is None:
-            display_width = img.width()
-            display_height = img.height()
-        else:
-            display_width = int(img.width() * size_value)
-            display_height = int(img.height() * size_value)
-        self.large_map_image.setFixedSize(display_width, display_height)
+        self.large_map_image.set_image(img_to_show)
 
     def on_route_selected(self, idx: int) -> None:
         self.chosen_route = self.existed_route_opt.itemData(idx)
@@ -638,18 +611,8 @@ class WorldPatrolDrawRouteInterface(VerticalScrollInterface):
         if self.chosen_route is None:
             return
 
-        display_width = self.large_map_image.width()
-        display_height = self.large_map_image.height()
-
-        lm_info = self.ctx.map_data.get_large_map_info(self.chosen_route.tp.region)
-        image_width = lm_info.raw.shape[1]
-        image_height = lm_info.raw.shape[0]
-
-        real_x = int(x * image_width / display_width)
-        real_y = int(y * image_height / display_height)
-
         world_patrol_route_draw_utils.add_move(self.ctx, self.chosen_route,
-                                               real_x, real_y, self.get_region_level())
+                                               x, y, self.get_region_level())
         self.update_display_by_route()
 
     def on_key_press(self, event: ContextEventItem) -> None:
