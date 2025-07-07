@@ -21,7 +21,14 @@ def read_image(file_path: str) -> Optional[MatLike]:
     """
     if not os.path.exists(file_path):
         return None
-    image = cv2.imread(file_path, cv2.IMREAD_UNCHANGED)
+    file_type = get_image_file_type(file_path)
+
+    # 默认以BGR格式加载
+    if file_type == 'webp':
+        image = cv2.imread(file_path, cv2.IMREAD_COLOR)
+    else:
+        image = cv2.imread(file_path, cv2.IMREAD_UNCHANGED)
+
     if image.ndim == 2:
         return image
     elif image.ndim == 3:
@@ -40,7 +47,25 @@ def save_image(img: MatLike, file_path: str) -> None:
     """
     if img.ndim == 3:
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-    cv2.imwrite(file_path, img)
+
+    file_type = get_image_file_type(file_path)
+    if file_type == 'webp':  # 无损压缩保存
+        cv2.imwrite(file_path, img, [cv2.IMWRITE_WEBP_QUALITY, 100])
+    else:
+        cv2.imwrite(file_path, img)
+
+
+def get_image_file_type(file_path: str) -> str:
+    """
+    从文件完整路径中提取文件类型
+
+    Args:
+        file_path: 文件路径
+
+    Returns:
+        str: 文件类型
+    """
+    return os.path.splitext(file_path)[1][1:]
 
 
 def show_image(

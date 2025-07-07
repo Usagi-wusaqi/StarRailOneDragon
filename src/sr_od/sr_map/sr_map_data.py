@@ -595,7 +595,7 @@ class SrMapData:
         dir_path = SrMapData.get_large_map_dir_path(region)
         info = LargeMapInfo()
         info.region = region
-        info.raw = cv2_utils.read_image(os.path.join(dir_path, 'raw.png'))
+        info.raw = cv2_utils.read_image(os.path.join(dir_path, 'raw.webp'))
         info.mask = cv2_utils.read_image(os.path.join(dir_path, 'mask.png'))
         self.large_map_info_map[region.prl_id] = info
         return info
@@ -623,14 +623,18 @@ class SrMapData:
                                                              region.planet.np_id, region.rl_id))
 
     @staticmethod
-    def get_map_path(region: Region, mt: str = 'raw') -> str:
+    def get_map_path(region: Region, mt: str = 'raw', suffix: str = 'png') -> str:
         """
         获取某张地图路径
-        :param region: 对应区域
-        :param mt: 地图类型
-        :return: 图片路径
+        Args:
+            region: 对应区域
+            mt: 地图类型 raw/mask
+            suffix: 后缀/文件类型
+
+        Returns:
+            str: 图片路径
         """
-        return os.path.join(SrMapData.get_large_map_dir_path(region), '%s.png' % mt)
+        return os.path.join(SrMapData.get_large_map_dir_path(region), f'{mt}.{suffix}')
 
     @staticmethod
     def save_large_map_image(image: MatLike, region: Region, mt: str = 'raw'):
