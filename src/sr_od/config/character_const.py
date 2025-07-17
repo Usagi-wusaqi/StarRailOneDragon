@@ -238,6 +238,8 @@ TRIBBIE = Character(id='tribbie', cn='缇宝', path=CHARACTER_PATH_HARMONY, comb
 CASORICE = Character(id='casorice', cn='遐蝶', path=CHARACTER_PATH_REMEMBRANCE, combat_type=QUANTUM, level=5, technique_type=TECHNIQUE_BUFF_ATTACK)
 HYACINE = Character(id='hyacine', cn='风堇', path=CHARACTER_PATH_REMEMBRANCE, combat_type=WIND, level=5, technique_type=TECHNIQUE_BUFF)
 PHAINON = Character(id='phainon', cn='白厄', path=CHARACTER_PATH_DESTRUCTION, combat_type=PHYSICAL, level=5, technique_type=TECHNIQUE_ATTACK)
+ARCHER = Character(id='archer', cn='Archer', path=CHARACTER_PATH_HUNT, combat_type=QUANTUM, level=5, technique_type=TECHNIQUE_ATTACK)
+SABER = Character(id='saber', cn='Saber', path=CHARACTER_PATH_DESTRUCTION, combat_type=WIND, level=5, technique_type=TECHNIQUE_BUFF)
 
 
 CHARACTER_LIST: List[Character] = [
@@ -314,6 +316,8 @@ CHARACTER_LIST: List[Character] = [
     CASORICE,
     HYACINE,
     PHAINON,
+    ARCHER,
+    SABER,
 ]
 
 
