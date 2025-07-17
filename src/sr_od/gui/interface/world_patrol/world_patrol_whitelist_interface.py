@@ -72,7 +72,7 @@ class WorldPatrolWhitelistInterface(VerticalScrollInterface):
         self.create_btn.clicked.connect(self.on_create_clicked)
         btn_row.add_widget(self.create_btn)
 
-        self.ToolButton(FluentIcon.DELETE)
+        self.delete_btn = PushButton(text=gt('删除'))
         self.delete_btn.clicked.connect(self.on_delete_clicked)
         btn_row.add_widget(self.delete_btn)
 
