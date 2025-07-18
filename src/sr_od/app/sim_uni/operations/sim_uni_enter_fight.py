@@ -4,6 +4,7 @@ from cv2.typing import MatLike
 from typing import ClassVar, Optional, List
 
 from one_dragon.base.operation.operation_base import OperationResult
+from one_dragon.base.operation.operation_node import operation_node
 from one_dragon.base.operation.operation_round_result import OperationRoundResult
 from one_dragon.utils.i18_utils import gt
 from one_dragon.utils.log_utils import log
@@ -78,7 +79,8 @@ class SimUniEnterFight(SrOperation):
 
         return None
 
-    def _execute_one_round(self) -> OperationRoundResult:
+    @operation_node(name='进入战斗', is_start_node=True)
+    def enter_fight(self) -> OperationRoundResult:
         screen = self.screenshot()
 
         self.last_state = self.current_state

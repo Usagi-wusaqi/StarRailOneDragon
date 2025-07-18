@@ -129,7 +129,7 @@ class SimUniMoveToInteractByDetect(SrOperation):
                 continue
             filter_results.append(result)
         if self.ctx.env_config.is_debug:
-            cv2_utils.show_image(detect_utils.draw_detections(frame_result), win_name='SimUniMoveToInteractByDetect')
+            # cv2_utils.show_image(detect_utils.draw_detections(frame_result), win_name='SimUniMoveToInteractByDetect')
             if len(frame_result.results) > 3 and random.random() < 0.3:
                 self.save_screenshot()
         return filter_results

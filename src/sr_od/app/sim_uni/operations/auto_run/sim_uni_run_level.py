@@ -212,7 +212,7 @@ class SimUniRunLevel(SrOperation):
             return self.round_fail(SimUniRunLevel.STATUS_NO_RESET)
 
         self.reset_times += 1
-        op = ResetSimUniLevel(self.ctx)
+        op = ResetSimUniLevel(self.ctx, self.world_num)
         return self.round_by_op_result(op.execute())
 
 

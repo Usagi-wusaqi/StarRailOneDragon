@@ -17,7 +17,7 @@ class ResetSimUniLevel(SrOperation):
 
     TEMP_LEAVE: ClassVar[Rect] = Rect  # 暂离
 
-    def __init__(self, ctx: SrContext):
+    def __init__(self, ctx: SrContext, world_num: int):
         """
         需要在模拟宇宙 移动画面中使用
         暂离后重新进入 用于重置位置 脱困
@@ -27,6 +27,7 @@ class ResetSimUniLevel(SrOperation):
             self, ctx,
             op_name='%s %s' % (gt('模拟宇宙', 'game'), gt('暂离重进')),
         )
+        self.world_num: int = world_num
 
     @operation_node(name='暂离', node_max_retry_times=10, is_start_node=True)
     def _temp_leave(self) -> OperationRoundResult:
@@ -69,7 +70,7 @@ class ResetSimUniLevel(SrOperation):
         选择宇宙
         :return:
         """
-        op = ChooseSimUniNum(self.ctx, num=1)  # 继续之前的 哪个宇宙没所谓
+        op = ChooseSimUniNum(self.ctx, num=self.world_num)  # 继续之前的 哪个宇宙没所谓
         op_result = op.execute()
         if op_result.success:
             return self.round_success()
