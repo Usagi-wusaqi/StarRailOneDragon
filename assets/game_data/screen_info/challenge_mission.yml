@@ -34,9 +34,9 @@ area_list:
   id_mark: false
   pc_rect:
   - 99
-  - 37
+  - 30
   - 214
-  - 59
+  - 68
   text: 队伍
   lcs_percent: 0.5
   template_sub_dir: ''
