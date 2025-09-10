@@ -282,6 +282,12 @@
           region_name: "铁卫禁区"
           power: 30
 
+        - mission_name: "塞壬之形"
+          show_in_power_plan: true
+          display_name: "冰-冰酿之形"
+          region_name: "「酣歌海垠」斯缇科西亚"
+          power: 30
+
         - mission_name: "冰酿之形"
           show_in_power_plan: true
           display_name: "冰-冰酿之形"
