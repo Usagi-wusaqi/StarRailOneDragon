@@ -243,6 +243,7 @@ SABER = Character(id='saber', cn='Saber', path=CHARACTER_PATH_DESTRUCTION, comba
 ANAXA = Character(id='anaxa', cn='那刻夏', path=CHARACTER_PATH_ERUDITION, combat_type=WIND, level=5, technique_type=TECHNIQUE_BUFF)
 HYSILENS = Character(id='hysilens', cn='海瑟音', path=CHARACTER_PATH_NIHILITY, combat_type=PHYSICAL, level=5, technique_type=TECHNIQUE_AREA)
 CERYDRA = Character(id='cerydra', cn='刻律德菈', path=CHARACTER_PATH_HARMONY, combat_type=WIND, level=5, technique_type=TECHNIQUE_BUFF)
+MYDEI = Character(id='mydei', cn='万敌', path=CHARACTER_PATH_DESTRUCTION, combat_type=PHYSICAL, level=5, technique_type=TECHNIQUE_BUFF_ATTACK)
 
 
 CHARACTER_LIST: List[Character] = [
@@ -324,6 +325,7 @@ CHARACTER_LIST: List[Character] = [
     ANAXA,
     HYSILENS,
     CERYDRA,
+    MYDEI,
 ]
 
 
