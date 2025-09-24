@@ -244,6 +244,7 @@ ANAXA = Character(id='anaxa', cn='那刻夏', path=CHARACTER_PATH_ERUDITION, com
 HYSILENS = Character(id='hysilens', cn='海瑟音', path=CHARACTER_PATH_NIHILITY, combat_type=PHYSICAL, level=5, technique_type=TECHNIQUE_AREA)
 CERYDRA = Character(id='cerydra', cn='刻律德菈', path=CHARACTER_PATH_HARMONY, combat_type=WIND, level=5, technique_type=TECHNIQUE_BUFF)
 MYDEI = Character(id='mydei', cn='万敌', path=CHARACTER_PATH_DESTRUCTION, combat_type=PHYSICAL, level=5, technique_type=TECHNIQUE_BUFF_ATTACK)
+EVERNIGHT = Character(id='evernight', cn='长夜月', path=CHARACTER_PATH_REMEMBRANCE, combat_type=ICE, level=5, technique_type=TECHNIQUE_BUFF)
 
 
 CHARACTER_LIST: List[Character] = [
@@ -326,6 +327,7 @@ CHARACTER_LIST: List[Character] = [
     HYSILENS,
     CERYDRA,
     MYDEI,
+    EVERNIGHT,
 ]
 
 
