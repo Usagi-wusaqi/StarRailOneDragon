@@ -1,15 +1,14 @@
-import time
-
 import ctypes
 import ctypes.wintypes
+import time
+from functools import lru_cache
+
 import cv2
 import numpy as np
 import pyautogui
-from PIL.Image import Image
 from cv2.typing import MatLike
-from functools import lru_cache
+from PIL.Image import Image
 from pynput import keyboard
-from typing import Optional
 
 from one_dragon.base.controller.controller_base import ControllerBase
 from one_dragon.base.controller.pc_button import pc_button_utils
@@ -39,8 +38,8 @@ class PcControllerBase(ControllerBase):
                                                    standard_width=standard_width, standard_height=standard_height)
 
         self.keyboard_controller: KeyboardMouseController = KeyboardMouseController()
-        self.xbox_controller: Optional[XboxButtonController] = None
-        self.ds4_controller: Optional[Ds4ButtonController] = None
+        self.xbox_controller: XboxButtonController | None = None
+        self.ds4_controller: Ds4ButtonController | None = None
 
         self.btn_controller: PcButtonController = self.keyboard_controller
         self.sct = None
