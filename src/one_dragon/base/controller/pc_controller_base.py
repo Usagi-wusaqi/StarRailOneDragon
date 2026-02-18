@@ -201,9 +201,12 @@ class PcControllerBase(ControllerBase):
             log.warning('无法打开游戏进程 PID=%d', pid.value)
             return
 
-        ctypes.windll.kernel32.TerminateProcess(handle, 0)
+        result = ctypes.windll.kernel32.TerminateProcess(handle, 0)
         ctypes.windll.kernel32.CloseHandle(handle)
-        log.info('关闭游戏成功 PID=%d', pid.value)
+        if result:
+            log.info('关闭游戏成功 PID=%d', pid.value)
+        else:
+            log.warning('关闭游戏失败 PID=%d', pid.value)
 
     def input_str(self, to_input: str, interval: float = 0.1):
         """
