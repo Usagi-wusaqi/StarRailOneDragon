@@ -24,6 +24,29 @@ _REG_SCREEN_WIDTH = 'Screenmanager Resolution Width_h182942802'
 _REG_SCREEN_HEIGHT = 'Screenmanager Resolution Height_h2627697771'
 _REG_FULLSCREEN_MODE = 'Screenmanager Fullscreen mode_h3630240806'
 
+_REG_VALUE_NAMES = (_REG_GRAPHICS_SETTINGS, _REG_SCREEN_WIDTH, _REG_SCREEN_HEIGHT, _REG_FULLSCREEN_MODE)
+
+# 备份的注册表值，用于关闭游戏后恢复
+_backup_subkey: str | None = None
+_backup_values: dict[str, tuple[bytes | int, int]] | None = None
+
+
+def restore_resolution_registry() -> None:
+    """恢复注册表中的分辨率设置为打开游戏前的值"""
+    global _backup_subkey, _backup_values
+    if _backup_subkey is None or _backup_values is None:
+        return
+
+    subkey = _backup_subkey
+    values = _backup_values
+    _backup_subkey = None  # 只恢复一次
+    _backup_values = None
+
+    with winreg.CreateKeyEx(winreg.HKEY_CURRENT_USER, subkey, 0, winreg.KEY_WRITE) as key:
+        for name, (value, reg_type) in values.items():
+            winreg.SetValueEx(key, name, 0, reg_type, value)
+    log.info('注册表分辨率设置已恢复')
+
 
 class OpenGame(Operation):
 
@@ -46,7 +69,18 @@ class OpenGame(Operation):
         fullscreen_mode = 1 if full_screen == '1' else 3
         is_full_screen = fullscreen_mode == 1
 
-        with winreg.CreateKeyEx(winreg.HKEY_CURRENT_USER, subkey, 0, winreg.KEY_WRITE) as key:
+        # 备份当前注册表值，用于关闭游戏后恢复；写入目标分辨率和显示模式
+        global _backup_subkey, _backup_values
+        with winreg.CreateKeyEx(winreg.HKEY_CURRENT_USER, subkey, 0, winreg.KEY_READ | winreg.KEY_WRITE) as key:
+            _, num_values, _ = winreg.QueryInfoKey(key)
+            values: dict[str, tuple[bytes | int, int]] = {}
+            for i in range(num_values):
+                name, data, reg_type = winreg.EnumValue(key, i)
+                if name in _REG_VALUE_NAMES:
+                    values[name] = (data, reg_type)
+            _backup_subkey = subkey if values else None
+            _backup_values = values if values else None
+
             json_str = f'{{"width":{width},"height":{height},"isFullScreen":{str(is_full_screen).lower()}}}\0'
             winreg.SetValueEx(key, _REG_GRAPHICS_SETTINGS, 0, winreg.REG_BINARY, json_str.encode('ascii'))
             winreg.SetValueEx(key, _REG_SCREEN_WIDTH, 0, winreg.REG_DWORD, width)
