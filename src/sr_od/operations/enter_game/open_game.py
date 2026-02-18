@@ -87,7 +87,7 @@ class OpenGame(Operation):
             winreg.SetValueEx(key, _REG_SCREEN_HEIGHT, 0, winreg.REG_DWORD, height)
             winreg.SetValueEx(key, _REG_FULLSCREEN_MODE, 0, winreg.REG_DWORD, fullscreen_mode)
 
-        log.info('注册表分辨率设置成功: %dx%d 显示模式=%s', width, height, '全屏' if is_full_screen else '窗口化')
+        log.info('注册表暂更: 窗口尺寸=%dx%d 显示模式=%s', width, height, '全屏' if is_full_screen else '窗口化')
 
     @operation_node(name='打开游戏', is_start_node=True)
     def open_game(self) -> OperationRoundResult:
@@ -115,6 +115,7 @@ class OpenGame(Operation):
             # 仅保留有效的命令行参数: -popupwindow 和 -monitor
             popup_window = "-popupwindow " if self.ctx.game_config.popup_window else ""
             monitor = self.ctx.game_config.monitor
+            log.info('无边框窗口: %s 显示器: %s', '启用' if popup_window else '禁用', monitor)
             argument = f'{self.ctx.game_config.launch_argument_advance} {popup_window}-monitor {monitor}'
             command = f'{command} {argument}'
         command = f'{command} & exit"'
