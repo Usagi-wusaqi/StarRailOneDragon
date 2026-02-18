@@ -21,6 +21,15 @@ from one_dragon.base.geometry.point import Point
 from one_dragon.base.geometry.rectangle import Rect
 from one_dragon.utils.log_utils import log
 
+ctypes.windll.kernel32.OpenProcess.argtypes = [ctypes.wintypes.DWORD, ctypes.wintypes.BOOL, ctypes.wintypes.DWORD]
+ctypes.windll.kernel32.OpenProcess.restype = ctypes.wintypes.HANDLE
+ctypes.windll.kernel32.TerminateProcess.argtypes = [ctypes.wintypes.HANDLE, ctypes.wintypes.UINT]
+ctypes.windll.kernel32.TerminateProcess.restype = ctypes.wintypes.BOOL
+ctypes.windll.kernel32.CloseHandle.argtypes = [ctypes.wintypes.HANDLE]
+ctypes.windll.kernel32.CloseHandle.restype = ctypes.wintypes.BOOL
+ctypes.windll.user32.GetWindowThreadProcessId.argtypes = [ctypes.wintypes.HWND, ctypes.POINTER(ctypes.wintypes.DWORD)]
+ctypes.windll.user32.GetWindowThreadProcessId.restype = ctypes.wintypes.DWORD
+
 
 class PcControllerBase(ControllerBase):
 
@@ -189,18 +198,23 @@ class PcControllerBase(ControllerBase):
             log.info('未找到游戏窗口')
             return
 
+        # 通过窗口句柄获取所属进程ID
         pid = ctypes.wintypes.DWORD()
         ctypes.windll.user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
         if not pid.value:
+            # 窗口可能在查询前已经关闭
             log.warning('无法获取游戏进程ID')
             return
 
+        # 以终止权限打开进程
         PROCESS_TERMINATE = 0x0001
         handle = ctypes.windll.kernel32.OpenProcess(PROCESS_TERMINATE, False, pid.value)
         if not handle:
+            # 进程已退出或权限不足
             log.warning('无法打开游戏进程 PID=%d', pid.value)
             return
 
+        # 强制终止进程并释放句柄
         result = ctypes.windll.kernel32.TerminateProcess(handle, 0)
         ctypes.windll.kernel32.CloseHandle(handle)
         if result:
