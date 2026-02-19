@@ -220,8 +220,10 @@ class SrPcController(PcControllerBase):
 
     def close_game(self):
         from sr_od.operations.enter_game.open_game import restore_resolution_registry
-        restore_resolution_registry()
-        super().close_game()
+        try:
+            restore_resolution_registry()
+        finally:
+            super().close_game()
 
     def gameplay_interact(self, press_time: float = 0):
         if press_time > 0:
