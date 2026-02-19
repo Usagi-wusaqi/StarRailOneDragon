@@ -11,13 +11,9 @@ from sr_od.context.sr_context import SrContext
 
 # 星穹铁道会忽略 -screen-width/-screen-height/-screen-fullscreen 命令行参数
 # 需要通过注册表设置分辨率和显示模式
-_REGISTRY_SUBKEYS = {
-    'cn': r'Software\miHoYo\崩坏：星穹铁道',
-    'us': r'Software\Cognosphere\Star Rail',
-    'eu': r'Software\Cognosphere\Star Rail',
-    'asia': r'Software\Cognosphere\Star Rail',
-    'twhkmo': r'Software\Cognosphere\Star Rail',
-}
+_CN_SUBKEY = r'Software\miHoYo\崩坏：星穹铁道'
+_INTL_SUBKEY = r'Software\Cognosphere\Star Rail'
+_SUPPORTED_REGIONS = frozenset({'cn', 'us', 'eu', 'asia', 'twhkmo'})
 
 _REG_GRAPHICS_SETTINGS = 'GraphicsSettings_PCResolution_h431323223'
 _REG_SCREEN_WIDTH = 'Screenmanager Resolution Width_h182942802'
@@ -60,10 +56,10 @@ class OpenGame(Operation):
         星穹铁道游戏内设置会覆盖命令行的 -screen-width/-screen-height/-screen-fullscreen 参数，需要通过注册表来设置。
         """
         region = self.ctx.game_account_config.game_region
-        subkey = _REGISTRY_SUBKEYS.get(region)
-        if subkey is None:
+        if region not in _SUPPORTED_REGIONS:
             log.warning('不支持通过注册表设置分辨率的区服: %s，跳过', region)
             return
+        subkey = _CN_SUBKEY if region == 'cn' else _INTL_SUBKEY
 
         # 显示模式转换: config '0'(窗口化) -> registry 3, config '1'(全屏) -> registry 1
         fullscreen_mode = 1 if full_screen == '1' else 3
