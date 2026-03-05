@@ -7,6 +7,7 @@ from one_dragon.base.operation.operation_node import operation_node
 from one_dragon.base.operation.operation_round_result import OperationRoundResult
 from one_dragon.utils.i18_utils import gt
 from one_dragon.utils.log_utils import log
+from one_dragon.utils.reg_utils import RegistryPatch
 from sr_od.context.sr_context import SrContext
 
 # 星穹铁道会忽略 -screen-width/-screen-height/-screen-fullscreen 命令行参数
@@ -20,31 +21,14 @@ _REG_SCREEN_WIDTH = 'Screenmanager Resolution Width_h182942802'
 _REG_SCREEN_HEIGHT = 'Screenmanager Resolution Height_h2627697771'
 _REG_FULLSCREEN_MODE = 'Screenmanager Fullscreen mode_h3630240806'
 
-_REG_VALUE_NAMES = (_REG_GRAPHICS_SETTINGS, _REG_SCREEN_WIDTH, _REG_SCREEN_HEIGHT, _REG_FULLSCREEN_MODE)
-
-# 备份的注册表值，用于关闭游戏后恢复
-_backup_subkey: str | None = None
-_backup_values: dict[str, tuple[bytes | int, int]] | None = None
+# 模块级补丁实例，供 close_game 时恢复
+_resolution_patch: RegistryPatch | None = None
 
 
 def restore_resolution_registry() -> None:
     """恢复注册表中的分辨率设置为打开游戏前的值"""
-    global _backup_subkey, _backup_values
-    if _backup_subkey is None or _backup_values is None:
-        return
-
-    subkey = _backup_subkey
-    values = _backup_values
-    _backup_subkey = None  # 只恢复一次
-    _backup_values = None
-
-    try:
-        with winreg.CreateKeyEx(winreg.HKEY_CURRENT_USER, subkey, 0, winreg.KEY_WRITE) as key:
-            for name, (value, reg_type) in values.items():
-                winreg.SetValueEx(key, name, 0, reg_type, value)
-        log.info('注册表分辨率设置已恢复')
-    except OSError:
-        log.exception('恢复注册表分辨率设置失败')
+    if _resolution_patch is not None:
+        _resolution_patch.restore()
 
 
 class OpenGame(Operation):
@@ -68,30 +52,20 @@ class OpenGame(Operation):
         fullscreen_mode = 1 if full_screen == '1' else 3
         is_full_screen = fullscreen_mode == 1
 
-        # 备份当前注册表值，用于关闭游戏后恢复；写入目标分辨率和显示模式
-        global _backup_subkey, _backup_values
-        try:
-            with winreg.CreateKeyEx(winreg.HKEY_CURRENT_USER, subkey, 0, winreg.KEY_READ | winreg.KEY_WRITE) as key:
-                _, num_values, _ = winreg.QueryInfoKey(key)
-                values: dict[str, tuple[bytes | int, int]] = {}
-                for i in range(num_values):
-                    name, data, reg_type = winreg.EnumValue(key, i)
-                    if name in _REG_VALUE_NAMES:
-                        values[name] = (data, reg_type)
-                _backup_subkey = subkey if values else None
-                _backup_values = values if values else None
+        json_str = f'{{"width":{width},"height":{height},"isFullScreen":{str(is_full_screen).lower()}}}\0'
+        values: dict[str, tuple[bytes | int, int]] = {
+            _REG_GRAPHICS_SETTINGS: (json_str.encode('ascii'), winreg.REG_BINARY),
+            _REG_SCREEN_WIDTH: (width, winreg.REG_DWORD),
+            _REG_SCREEN_HEIGHT: (height, winreg.REG_DWORD),
+            _REG_FULLSCREEN_MODE: (fullscreen_mode, winreg.REG_DWORD),
+        }
 
-                json_str = f'{{"width":{width},"height":{height},"isFullScreen":{str(is_full_screen).lower()}}}\0'
-                winreg.SetValueEx(key, _REG_GRAPHICS_SETTINGS, 0, winreg.REG_BINARY, json_str.encode('ascii'))
-                winreg.SetValueEx(key, _REG_SCREEN_WIDTH, 0, winreg.REG_DWORD, width)
-                winreg.SetValueEx(key, _REG_SCREEN_HEIGHT, 0, winreg.REG_DWORD, height)
-                winreg.SetValueEx(key, _REG_FULLSCREEN_MODE, 0, winreg.REG_DWORD, fullscreen_mode)
-        except OSError:
-            _backup_subkey = None
-            _backup_values = None
-            log.exception('注册表分辨率设置失败，将继续使用当前设置')
+        global _resolution_patch
+        patch = RegistryPatch(subkey)
+        if not patch.backup_and_set(values):
+            log.warning('注册表分辨率设置失败，将继续使用当前设置')
             return
-
+        _resolution_patch = patch
         log.info('注册表暂更: 窗口尺寸=%dx%d 显示模式=%s', width, height, '全屏' if is_full_screen else '窗口化')
 
     @operation_node(name='打开游戏', is_start_node=True)

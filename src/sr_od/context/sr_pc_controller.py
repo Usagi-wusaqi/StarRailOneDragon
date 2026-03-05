@@ -40,12 +40,18 @@ class SrPcController(PcControllerBase):
         适配新版本游戏,需要多次点击关闭按钮才能成功关闭
         :return:
         """
+        from sr_od.operations.enter_game.open_game import restore_resolution_registry
+        try:
+            restore_resolution_registry()
+        except Exception:
+            log.error('恢复注册表分辨率设置失败', exc_info=True)
+
         win = self.game_win.get_win()
         if win is None:
             return
         try:
             # 尝试多次点击关闭按钮,新版本游戏需要多次点击才能关闭
-            for i in range(5):
+            for _ in range(5):
                 try:
                     win.close()
                     time.sleep(0.5)
@@ -240,13 +246,6 @@ class SrPcController(PcControllerBase):
     def use_technique(self) -> bool:
         self.btn_controller.tap(self.game_config.key_technique)
         return True
-
-    def close_game(self):
-        from sr_od.operations.enter_game.open_game import restore_resolution_registry
-        try:
-            restore_resolution_registry()
-        finally:
-            super().close_game()
 
     def gameplay_interact(self, press_time: float = 0):
         if press_time > 0:
