@@ -42,26 +42,26 @@ class RegistryPatch:
                     winreg.SetValueEx(key, name, 0, reg_type, data)
             return True
         except OSError:
-            self._backup = None
             log.exception('注册表写入失败: %s', self._subkey)
             return False
 
     def restore(self) -> None:
-        """恢复之前备份的注册表值。仅恢复一次，调用后备份清空。"""
+        """恢复之前备份的注册表值。仅恢复一次，调用后备份清空。
+
+        恢复失败时保留备份，以便后续重试。
+        """
         if self._backup is None:
             return
-
-        backup = self._backup
-        self._backup = None
 
         try:
             with winreg.CreateKeyEx(self._root, self._subkey, 0,
                                     winreg.KEY_WRITE) as key:
-                for name, (data, reg_type) in backup.items():
+                for name, (data, reg_type) in self._backup.items():
                     winreg.SetValueEx(key, name, 0, reg_type, data)
+            self._backup = None
             log.info('注册表已恢复: %s', self._subkey)
         except OSError:
-            log.exception('注册表恢复失败: %s', self._subkey)
+            log.exception('注册表恢复失败（备份已保留，可重试）: %s', self._subkey)
 
 
 def _read_values(key: winreg.HKEYType, names: set[str]) -> dict[str, tuple[bytes | int, int]]:

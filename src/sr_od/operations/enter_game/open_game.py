@@ -61,6 +61,9 @@ class OpenGame(Operation):
         }
 
         global _resolution_patch
+        if _resolution_patch is not None:
+            _resolution_patch.restore()
+
         patch = RegistryPatch(subkey)
         if not patch.backup_and_set(values):
             log.warning('注册表分辨率设置失败，将继续使用当前设置')
