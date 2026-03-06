@@ -4,7 +4,7 @@ from one_dragon.base.operation.operation_node import OperationNode, operation_no
 from one_dragon.base.operation.operation_round_result import OperationRoundResult
 from one_dragon.utils.i18_utils import gt
 from sr_od.context.sr_context import SrContext
-from sr_od.operations.enter_game.open_game import OpenGame
+from sr_od.operations.enter_game.open_game import OpenGame, restore_resolution_registry
 
 
 class OpenAndEnterGame(Operation):
@@ -45,6 +45,7 @@ class OpenAndEnterGame(Operation):
         self.ctx.controller.game_win.init_win()
         if self.ctx.controller.is_game_window_ready:
             self.ctx.controller.active_window()
+            restore_resolution_registry()
             return self.round_success()
         else:
             return self.round_retry(wait=1)
